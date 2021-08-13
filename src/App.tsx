@@ -1,12 +1,14 @@
 import React from 'react';
 import './App.css';
-import { Typography } from '@material-ui/core';
+import Dashboard from './components/Dashboard';
+import Header from './components/Header';
 
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <Typography variant='h4'>Hello World!</Typography>
+      <Header title={'Bench Test'} />
+      <Dashboard />
     </div>
   );
 }
