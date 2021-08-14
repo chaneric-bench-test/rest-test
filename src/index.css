@@ -3,7 +3,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #EFEDE8;
-  font-family: 'LLCircularWeb';
+  font-family: LLCircularWeb !important;
 }
 
 code {

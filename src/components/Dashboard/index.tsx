@@ -1,4 +1,4 @@
-import { CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Transaction } from '../../types/Transaction';
 import TransactionTable from '../TransactionTable';
@@ -23,6 +23,7 @@ const Dashboard: React.FC = () => {
           setMaxPage(Math.ceil(r?.totalCount / 10));
         })
         .catch((e) => {
+          setLoading(false);
           setError(e);
         })
     }, []);
@@ -38,6 +39,7 @@ const Dashboard: React.FC = () => {
               }))
             })
             .catch((e) => {
+              setLoading(false);
               setError(e);
             });
         }
@@ -51,17 +53,21 @@ const Dashboard: React.FC = () => {
       }
     }, [transactions, maxPage]);
 
-  return (
-    loading ? 
-    <CircularProgress /> :
-    <TransactionTable 
-      totalAmount={totalAmount}
-      transactions={transactions}
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
-      maxPage={maxPage}
+  return loading ? (
+    <Box p={4}>
+      <CircularProgress />
+    </Box>
+  ) : (
+    <Box p={4}>
+      <TransactionTable
+        totalAmount={totalAmount}
+        transactions={transactions}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        error={error}
       />
-  )
+    </Box>
+  );
 };
 
 export default Dashboard;
