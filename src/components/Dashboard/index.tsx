@@ -29,6 +29,7 @@ const Dashboard: React.FC = () => {
     }, []);
 
     useEffect(() => {
+      // fetch the rest of the pages only after fetching the first
       if (Object.keys(transactions).length === 1) {
         for (let i = 2; i <= maxPage; i++) {
           fetchPage(i)

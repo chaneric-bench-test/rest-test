@@ -1,6 +1,8 @@
 import { Table, TableHead, TableRow, TableCell, TableBody, Box, Button, Typography, TableContainer, Paper } from '@material-ui/core';
+import moment from 'moment';
 import React from 'react';
 import { Transaction } from '../../types/Transaction';
+import { formatCurrency } from '../utils';
 
 
 const TransactionTable: React.FC<TransactionTableProps> = (props) => {
@@ -30,7 +32,7 @@ const TransactionTable: React.FC<TransactionTableProps> = (props) => {
                 <Typography variant="h6">Account</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6">{totalAmount}</Typography>
+                <Typography variant="h6">{formatCurrency(totalAmount)}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -39,17 +41,19 @@ const TransactionTable: React.FC<TransactionTableProps> = (props) => {
               transactions?.[currentPage]?.map((t, index) => (
                 // Normally not good to bind it to the index..but with the data we have there's not much else to use
                 <TableRow key={`tableRow-${index}`}>
-                  <TableCell>{t.Date || 'N/A'}</TableCell>
-                  <TableCell>{t.Company || 'N/A'}</TableCell>
-                  <TableCell>{t.Ledger || 'N/A'}</TableCell>
-                  <TableCell>{t.Amount || '$0'}</TableCell>
+                  <TableCell>
+                    {moment(t.Date).format('ll') || "N/A"}
+                  </TableCell>
+                  <TableCell>{t.Company || "N/A"}</TableCell>
+                  <TableCell>{t.Ledger || "N/A"}</TableCell>
+                  <TableCell>{formatCurrency(t.Amount)}</TableCell>
                 </TableRow>
               ))}
-              {error &&
+            {error && (
               <TableRow>
                 <TableCell>{error.message}</TableCell>
               </TableRow>
-              }
+            )}
           </TableBody>
         </Table>
       </TableContainer>
