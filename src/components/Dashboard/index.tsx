@@ -14,7 +14,7 @@ const Dashboard: React.FC = () => {
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
-      // fetch first
+      // fetch first page
         setLoading(true);
         fetchPage(1)
         .then((r) => {
@@ -42,12 +42,25 @@ const Dashboard: React.FC = () => {
             });
         }
       }
+      if (Object.keys(transactions).length === maxPage) {
+        // EC - this should only run after all the fetches for the pages are finished
+        const summedAmount = Object.values(transactions).flat()
+        .map((t) => parseFloat(t.Amount))
+        .reduce((acc, curr) => acc + curr, 0)
+        setTotalAmount(summedAmount);
+      }
     }, [transactions, maxPage]);
 
   return (
     loading ? 
     <CircularProgress /> :
-    <TransactionTable totalAmount={totalAmount} transactions={transactions} currentPage={currentPage} maxPage={maxPage} />
+    <TransactionTable 
+      totalAmount={totalAmount}
+      transactions={transactions}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage}
+      maxPage={maxPage}
+      />
   )
 };
 

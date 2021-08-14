@@ -1,16 +1,29 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableCell, TableBody, TableFooter, Box, Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { Transaction } from '../../types/Transaction';
 
 
-const TransactionTable: React.FC<TransactionTableProps> = ({ transactions, totalAmount, maxPage, currentPage }) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({ transactions, totalAmount, maxPage, currentPage, setCurrentPage }) => {
+  const handleNext = () => {
+    setCurrentPage(currentPage + 1);
+  }
+  const handlePrevious = () => {
+    setCurrentPage(currentPage - 1);
+  }
+
   return (
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Date</TableCell>
-          <TableCell>Company</TableCell>
-          <TableCell>Account</TableCell>
+          <TableCell>
+            <Typography variant="h6">Date</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography variant="h6">Company</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography variant="h6">Account</Typography>
+          </TableCell>
           <TableCell>{totalAmount}</TableCell>
         </TableRow>
       </TableHead>
@@ -27,11 +40,26 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions, total
           ))}
       </TableBody>
       <TableFooter>
-        <TableRow>
-          <TableCell>
-            Hello
-          </TableCell>
-        </TableRow>
+        <Box mt={3} display="flex">
+          <Box>
+            <Button
+              disabled={currentPage === 1}
+              variant="contained"
+              onClick={handlePrevious}
+            >
+              Previous
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              disabled={currentPage === maxPage}
+              variant="contained"
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          </Box>
+        </Box>
       </TableFooter>
     </Table>
   );
@@ -42,6 +70,7 @@ interface TransactionTableProps {
   totalAmount: number;
   maxPage: number;
   currentPage: number;
+  setCurrentPage: any;
 }
 
 export default TransactionTable;
