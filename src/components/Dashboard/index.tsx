@@ -1,52 +1,53 @@
-import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { callApi } from '../../api';
-import { API_ENDPOINT, TRANSACTION } from '../../endpoints';
-import { Transaction, TransactionResponse } from '../../types/Transaction';
+import { Transaction } from '../../types/Transaction';
+import TransactionTable from '../TransactionTable';
+import { fetchPage } from './utils';
 
 const Dashboard: React.FC = () => {
 
-  const [transactions, setTransactions] = useState<Array<Transaction>>();
+  const [transactions, setTransactions] = useState<{ [pageNo: number]: Array<Transaction> }>({});
+  const [maxPage, setMaxPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
+      // fetch first
+        setLoading(true);
+        fetchPage(1)
+        .then((r) => {
+          setLoading(false);
+          setTransactions({ 1:  r?.transactions })
+          setMaxPage(Math.ceil(r?.totalCount / 10));
+        })
+        .catch((e) => {
+          setError(e);
+        })
+    }, []);
 
-    // EC - Fetch the first page on load.
-    void callApi<TransactionResponse>(`${API_ENDPOINT}${TRANSACTION}/1.json`)
-    .then((r) => {
-      setLoading(false);
-      setTransactions(r?.transactions);
-    })
-    .catch((e) => {
-      setError(e);
-    });
-  }, [])
+    useEffect(() => {
+      if (Object.keys(transactions).length === 1) {
+        for (let i = 2; i <= maxPage; i++) {
+          fetchPage(i)
+            .then((r) => {
+              setTransactions(prevTransactions => ({
+                ...prevTransactions,
+                [r.page]: r.transactions
+              }))
+            })
+            .catch((e) => {
+              setError(e);
+            });
+        }
+      }
+    }, [transactions, maxPage]);
+
   return (
     loading ? 
     <CircularProgress /> :
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Date</TableCell>
-          <TableCell>Company</TableCell>
-          <TableCell>Account</TableCell>
-          <TableCell>{totalAmount}</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {transactions && transactions.map((t) => (
-          <TableRow>
-            <TableCell>{t.Date}</TableCell>
-            <TableCell>{t.Company}</TableCell>
-            <TableCell>{t.Ledger}</TableCell>
-            <TableCell>{t.Amount}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <TransactionTable totalAmount={totalAmount} transactions={transactions} currentPage={currentPage} maxPage={maxPage} />
   )
 };
 
