@@ -32,7 +32,7 @@ const TransactionTable: React.FC<TransactionTableProps> = (props) => {
                 <Typography variant="h6">Account</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6">{formatCurrency(totalAmount)}</Typography>
+                <Typography variant="h6">{totalAmount ? formatCurrency(totalAmount) : 'Calculating...'}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -83,7 +83,7 @@ const TransactionTable: React.FC<TransactionTableProps> = (props) => {
 
 interface TransactionTableProps {
   transactions: { [pageNo: number]: Array<Transaction> };
-  totalAmount: number;
+  totalAmount?: number;
   currentPage: number;
   setCurrentPage: any;
   error?: Error;
