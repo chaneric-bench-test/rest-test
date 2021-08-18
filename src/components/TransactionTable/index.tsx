@@ -38,9 +38,8 @@ const TransactionTable: React.FC<TransactionTableProps> = (props) => {
           </TableHead>
           <TableBody>
             {transactions &&
-              transactions?.[currentPage]?.map((t, index) => (
-                // Normally not good to bind it to the index..but with the data we have there's not much else to use
-                <TableRow key={`tableRow-${index}`}>
+              transactions[currentPage]?.map((t, index) => (
+                <TableRow key={`tableRow-${index}-${t.Company}-${t.Ledger}-${t.Amount}`}>
                   <TableCell>
                     {moment(t.Date).format('ll') || "N/A"}
                   </TableCell>
